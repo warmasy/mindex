@@ -6,7 +6,7 @@
 
 [build.environment]
   # 设置 Node 版本（根据你的本地版本调整，18/20 都可以）
-  NODE_VERSION = "20"
+  NODE_VERSION = "18"
   # 确保生产环境变量
   VITE_APP_ENV = "production"
 
