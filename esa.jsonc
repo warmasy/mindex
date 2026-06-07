@@ -1,7 +1,7 @@
 {
   "name": "earthonline",
-  "installCommand": "npm install",
-  "buildCommand": "npm run build:prod",
+  "installCommand": "npm install --legacy-peer-deps",
+  "buildCommand": "NODE_OPTIONS='--max-old-space-size=4096' npm run build:prod",
   "assets": {
     "directory": "./dist",
     "notFoundStrategy": "singlePageApplication"
