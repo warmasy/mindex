@@ -80,10 +80,10 @@ import { ElMessage } from 'element-plus'
 const defaultAvatar = 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
 
 const siteInfo = reactive({
-  logo: 'https://myblog.3139822.xyz/favicon.ico',
+  logo: 'https://www.baidu.com/img/flexible/logo/pc/result.png',
   name: '我的博客',
-  url: 'https://myblog.3139822.xyz',
-  description: '鄙人的博客。'
+  url: 'https://www.baidu.com',
+  description: '这是一个简洁的个人博客，记录学习与生活。'
 })
 
 const selectedTab = ref("articles")

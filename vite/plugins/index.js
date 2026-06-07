@@ -10,7 +10,10 @@ export default function createVitePlugins(viteEnv, isBuild = false) {
     const vitePlugins = [vue()]
     vitePlugins.push(createAutoImport())
 	vitePlugins.push(createSetupExtend())
-	vitePlugins.push(monacoEditorEsmPlugin())
+	vitePlugins.push(monacoEditorEsmPlugin({
+        languageWorkers: ['editorWorkerService'],
+        customWorkers: []
+    }))
     vitePlugins.push(createSvgIcon(isBuild))
 	isBuild && vitePlugins.push(...createCompression(viteEnv))
     return vitePlugins
