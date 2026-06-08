@@ -85,7 +85,7 @@ const defaultAvatar = 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e5
 const siteInfo = reactive({
   logo: 'http://memos.3139822.xyz/full-logo.webp',
   name: 'Memos',
-  url: 'http://memos.3139822.xyz',
+  url: 'http://memos.3139822.xyz/',
   description: '这是一个简洁的备忘录应用。'
 })
 
