@@ -30,7 +30,7 @@
             <template #header>
               <div class="card-header">
                 <span>进行中的项目</span>
-                <a href="">
+                <a href="" target="_blank" rel="noopener noreferrer">
                   <span style="color: var(--el-color-primary)">全部项目</span>
                 </a>
               </div>
@@ -45,12 +45,12 @@
                   <div class="card-meta">
                     <div class="cardTitle">
                       <el-avatar size="small" :src="item.logo" />
-                      <a :href="item.href">{{ item.title }}</a>
+                      <a :href="item.href" target="_blank" rel="noopener noreferrer">{{ item.title }}</a>
                     </div>
                     <div class="meta-description">{{ item.description }}</div>
                   </div>
                   <div class="projectItemContent">
-                    <a :href="item.memberLink">{{ item.member || "" }}</a>
+                    <a :href="item.memberLink" target="_blank" rel="noopener noreferrer">{{ item.member || "" }}</a>
                     <span class="datetime" :title="item.updatedAt">
                       {{ item.updatedAt }}
                     </span>
@@ -78,11 +78,11 @@
                     <a class="username">{{ item.user.name }}</a>&nbsp;
                     <span class="event">
                       <span>{{ item.template1 }}</span>&nbsp;
-                      <a href="" style="color: var(--el-color-primary)">
+                      <a href="" target="_blank" rel="noopener noreferrer" style="color: var(--el-color-primary)">
                         {{ item?.group?.name }}
                       </a>&nbsp;
                       <span>{{ item.template2 }}</span>&nbsp;
-                      <a href="" style="color: var(--el-color-primary)">
+                      <a href="" target="_blank" rel="noopener noreferrer" style="color: var(--el-color-primary)">
                         {{ item?.project?.name }}
                       </a>
                     </span>
