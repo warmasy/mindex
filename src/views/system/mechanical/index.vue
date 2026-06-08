@@ -86,7 +86,7 @@ import { ElMessage } from 'element-plus'
 const defaultAvatar = 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
 
 const siteInfo = reactive({
-  logo: '',
+  logo: 'https://mj002.zh-cn.edgeone.cool/favicon.svg',
   name: '机械计算',
   url: 'https://mech.example.com',
   description: '机械工程常用计算工具平台。'
@@ -95,27 +95,15 @@ const siteInfo = reactive({
 const selectedTab = ref("common")
 
 const calcItems = ref([
-  { id: 1, name: '齿轮传动计算', desc: '计算齿轮传动比、模数、齿数等参数', type: '传动', updateTime: '2024-06-01' },
-  { id: 2, name: '轴承寿命计算', desc: '根据载荷和转速计算轴承额定寿命', type: '轴承', updateTime: '2024-06-02' },
-  { id: 3, name: '轴强度校核', desc: '校核轴的强度和刚度是否满足要求', type: '轴系', updateTime: '2024-06-03' },
-  { id: 4, name: '弹簧设计计算', desc: '圆柱螺旋弹簧的设计与校核计算', type: '弹簧', updateTime: '2024-06-04' },
-  { id: 5, name: '螺纹连接计算', desc: '螺栓预紧力和强度校核计算', type: '连接', updateTime: '2024-06-05' }
+  { id: 1, name: '齿轮传动计算', desc: '计算齿轮传动比、模数、齿数等参数', type: '传动', updateTime: '2024-06-01' }
 ])
 
 const formulas = ref([
-  { id: 1, name: '传动比', expr: 'i = z₂ / z₁ = n₁ / n₂' },
-  { id: 2, name: '轴承寿命', expr: 'L₁₀ = (C / P)³ × 10⁶ (转)' },
-  { id: 3, name: '扭矩', expr: 'T = 9550 × P / n (N·m)' },
-  { id: 4, name: '应力', expr: 'σ = F / A (MPa)' },
-  { id: 5, name: '挠度', expr: 'f = FL³ / (3EI) (mm)' }
+  { id: 1, name: '扭矩', expr: 'T = 9550 × P / n (N·m)' }
 ])
 
 const historyList = ref([
-  { id: 1, name: '计算任务 1', result: '86.42', time: '2024-06-01 10:00' },
-  { id: 2, name: '计算任务 2', result: '123.56', time: '2024-06-02 11:30' },
-  { id: 3, name: '计算任务 3', result: '45.78', time: '2024-06-03 14:15' },
-  { id: 4, name: '计算任务 4', result: '92.33', time: '2024-06-04 09:45' },
-  { id: 5, name: '计算任务 5', result: '67.91', time: '2024-06-05 16:20' }
+  { id: 1, name: '计算任务 1', result: '86.42', time: '2024-06-01 10:00' }
 ])
 
 function openWebsite(url) {

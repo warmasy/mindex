@@ -83,9 +83,9 @@ import { ElMessage } from 'element-plus'
 const defaultAvatar = 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
 
 const siteInfo = reactive({
-  logo: '',
+  logo: 'http://memos.3139822.xyz/full-logo.webp',
   name: 'Memos',
-  url: 'https://memos.example.com',
+  url: 'http://memos.3139822.xyz',
   description: '这是一个简洁的备忘录应用。'
 })
 

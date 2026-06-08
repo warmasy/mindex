@@ -8,7 +8,7 @@
                    <span>网站信息</span>
                  </div>
                </template>
-                                             <div class="info-content">
+               <div class="info-content">
                   <div class="text-center">
                      <div class="avatar-box">
                         <img v-if="siteInfo.logo" :src="siteInfo.logo" class="site-logo-img" />
@@ -80,10 +80,10 @@ import { ElMessage } from 'element-plus'
 const defaultAvatar = 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
 
 const siteInfo = reactive({
-  logo: 'https://www.baidu.com/img/flexible/logo/pc/result.png',
+  logo: 'https://myblog.3139822.xyz/favicon.ico',
   name: '我的博客',
-  url: 'https://www.baidu.com',
-  description: '这是一个简洁的个人博客，记录学习与生活。'
+  url: 'https://myblog.3139822.xyz',
+  description: '这是窝的个人博客'
 })
 
 const selectedTab = ref("articles")
