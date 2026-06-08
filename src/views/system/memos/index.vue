@@ -8,7 +8,7 @@
                    <span>网站信息</span>
                  </div>
                </template>
-                                             <div class="info-content">
+               <div class="info-content">
                   <div class="text-center">
                      <div class="avatar-box">
                         <img v-if="siteInfo.logo" :src="siteInfo.logo" class="site-logo-img" />
@@ -44,30 +44,49 @@
                  </div>
                </template>
                <el-tabs v-model="selectedTab">
-                  <el-tab-pane label="备忘录" name="memos">
-                     <div class="memo-list">
-                        <div v-for="memo in memoList" :key="memo.id" class="memo-item">
-                           <div class="memo-content">
-                              <p>{{ memo.content }}</p>
-                           </div>
-                           <div class="memo-meta">
-                             <span>{{ memo.date }}</span>
-                             <span>标签: {{ memo.tag }}</span>
-                           </div>
+                  <el-tab-pane label="所有网站" name="websites">
+                     <el-table :data="websiteList" class="site-table" stripe>
+                        <el-table-column type="index" label="序号" width="80" align="center" />
+                        <el-table-column label="网址" min-width="200" align="center">
+                           <template #default="scope">
+                              <span class="table-url">{{ scope.row.url }}</span>
+                           </template>
+                        </el-table-column>
+                        <el-table-column label="平台" prop="platform" width="120" align="center" />
+                        <el-table-column label="操作" width="180" align="center">
+                           <template #default="scope">
+                              <el-button type="primary" link size="small" icon="CopyDocument" @click="copyUrl(scope.row.url, scope.row.platform)">复制</el-button>
+                              <el-button type="success" link size="small" icon="TopRight" @click="openWebsite(scope.row.url)">跳转</el-button>
+                           </template>
+                        </el-table-column>
+                     </el-table>
+                  </el-tab-pane>
+                  <el-tab-pane label="诗歌" name="poetry">
+                     <div class="poetry-box">
+                        <h3 class="poetry-title">《备忘录》</h3>
+                        <div class="poetry-content">
+                           <p>时光如白驹过隙，</p>
+                           <p>记忆却如繁星点点。</p>
+                           <p>随手记下的只言片语，</p>
+                           <p>是岁月最温柔的纪念。</p>
+                           <br>
+                           <p>待办的事项、闪现的灵感，</p>
+                           <p>生活的碎片拼凑成圆。</p>
+                           <p>翻开备忘录的那一刻，</p>
+                           <p>往事如烟，却又清晰可见。</p>
                         </div>
+                        <div class="poetry-author">—— 时光拾遗者</div>
                      </div>
                   </el-tab-pane>
-                  <el-tab-pane label="标签" name="tags">
-                     <div class="tag-cloud">
-                        <el-tag v-for="tag in tags" :key="tag" class="tag-item">{{ tag }}</el-tag>
-                     </div>
-                  </el-tab-pane>
-                  <el-tab-pane label="归档" name="archive">
-                     <div class="archive-list">
-                        <div v-for="archive in archiveList" :key="archive.month" class="archive-item">
-                           <el-link type="primary">{{ archive.month }}</el-link>
-                           <span class="archive-count">({{ archive.count }} 条)</span>
-                        </div>
+                  <el-tab-pane label="图片" name="image">
+                     <div class="image-full">
+                        <el-image
+                           :src="imageConfig.url"
+                           :preview-src-list="[imageConfig.url]"
+                           fit="cover"
+                           class="full-image"
+                        />
+                        <div class="image-caption">{{ imageConfig.caption }}</div>
                      </div>
                   </el-tab-pane>
                </el-tabs>
@@ -89,25 +108,22 @@ const siteInfo = reactive({
   description: '这是一个简洁的备忘录应用。'
 })
 
-const selectedTab = ref("memos")
+const selectedTab = ref("websites")
 
-const tags = ref(['工作', '学习', '生活', '灵感', '待办', '笔记', '想法', '计划'])
+// 图片配置对象
+const imageConfig = ref({
+  url: 'https://images.unsplash.com/photo-1517842645767-c639042777db?w=800&h=400&fit=crop',
+  caption: 'Memos 应用界面',
+  width: '600px',
+  height: '300px'
+})
 
-const memoList = ref([
-  { id: 1, content: '这是第 1 条备忘录内容，记录一些重要的想法和待办事项...', date: '2024-06-01', tag: '工作' },
-  { id: 2, content: '这是第 2 条备忘录内容，记录一些重要的想法和待办事项...', date: '2024-06-02', tag: '学习' },
-  { id: 3, content: '这是第 3 条备忘录内容，记录一些重要的想法和待办事项...', date: '2024-06-03', tag: '生活' },
-  { id: 4, content: '这是第 4 条备忘录内容，记录一些重要的想法和待办事项...', date: '2024-06-04', tag: '灵感' },
-  { id: 5, content: '这是第 5 条备忘录内容，记录一些重要的想法和待办事项...', date: '2024-06-05', tag: '待办' }
-])
-
-const archiveList = ref([
-  { month: '2024年6月', count: 15 },
-  { month: '2024年5月', count: 23 },
-  { month: '2024年4月', count: 18 },
-  { month: '2024年3月', count: 12 },
-  { month: '2024年2月', count: 9 },
-  { month: '2024年1月', count: 6 }
+const websiteList = ref([
+  { id: 1, url: 'http://memos.3139822.xyz', platform: 'Memos' },
+  { id: 2, url: 'https://myblog.3139822.xyz', platform: '博客' },
+  { id: 3, url: 'https://www.baidu.com', platform: '阿里' },
+  { id: 4, url: 'https://github.com', platform: 'GitHub' },
+  { id: 5, url: 'https://notion.so', platform: 'Notion' }
 ])
 
 function openWebsite(url) {
@@ -215,53 +231,76 @@ function copyUrl(url, name) {
   height: calc(100% - 50px);
   overflow-y: auto;
 }
-.memo-list {
-  padding: 10px 0;
+
+/* 表格样式 */
+.site-table {
+  width: 100%;
 }
-.memo-item {
-  padding: 16px;
-  margin-bottom: 12px;
-  border-radius: 8px;
-  background: var(--el-fill-color-lighter);
-  border: 1px solid var(--el-border-color-lighter);
+.site-table :deep(.el-table__header-wrapper th) {
+  background-color: #f5f7fa !important;
+  color: #606266;
+  font-weight: 500;
 }
-.memo-item:last-child {
-  margin-bottom: 0;
+.site-table :deep(.el-table__body tr) {
+  background-color: #ffffff;
 }
-.memo-content p {
+.site-table :deep(.el-table__body tr:hover > td) {
+  background-color: #f5f7fa !important;
+}
+.site-table :deep(.el-table__row td) {
+  border-bottom: 1px solid #ebeef5;
+}
+.table-url {
+  color: #606266;
+}
+
+/* 诗歌样式 */
+.poetry-box {
+  padding: 30px 20px;
+  text-align: center;
+}
+.poetry-title {
+  font-size: 18px;
+  color: var(--el-color-primary);
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+.poetry-content {
+  font-size: 15px;
+  line-height: 2.2;
   color: var(--el-text-color-regular);
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: 8px;
+  margin-bottom: 20px;
 }
-.memo-meta {
-  display: flex;
-  gap: 20px;
-  font-size: 12px;
-  color: var(--el-text-color-secondary);
+.poetry-content p {
+  margin: 4px 0;
 }
-.tag-cloud {
-  padding: 20px;
-}
-.tag-item {
-  margin: 6px;
-  cursor: pointer;
-}
-.archive-list {
-  padding: 20px;
-}
-.archive-item {
-  padding: 10px 0;
-  border-bottom: 1px solid var(--el-border-color-lighter);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.archive-item:last-child {
-  border-bottom: none;
-}
-.archive-count {
-  color: var(--el-text-color-secondary);
+.poetry-author {
   font-size: 13px;
+  color: var(--el-text-color-secondary);
+  text-align: right;
+  padding-right: 40px;
+}
+
+/* 图片铺满 */
+.image-full {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+}
+.image-full :deep(.el-image) {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+}
+.image-full :deep(.el-image__inner) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.image-caption {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--el-text-color-secondary);
+  text-align: center;
 }
 </style>

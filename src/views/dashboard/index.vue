@@ -775,10 +775,9 @@ function refreshQuote() {
   color: var(--el-color-primary);
 }
 .quote-text {
-  font-size: 15px;
-  line-height: 1.8;
+  font-size: 14px;
+  line-height: 1.5;
   color: var(--el-text-color-primary);
-  font-style: italic;
   margin-bottom: 8px;
 }
 .quote-author {

@@ -44,27 +44,49 @@
                  </div>
                </template>
                <el-tabs v-model="selectedTab">
-                  <el-tab-pane label="文章列表" name="articles">
-                     <div class="article-list">
-                        <div v-for="article in articleList" :key="article.id" class="article-item">
-                           <h4>{{ article.title }}</h4>
-                           <p>{{ article.summary }}</p>
-                           <div class="article-meta">
-                             <span>{{ article.date }}</span>
-                             <span>阅读 {{ article.views }}</span>
-                           </div>
+                  <el-tab-pane label="所有网站" name="websites">
+                     <el-table :data="websiteList" class="site-table" stripe>
+                        <el-table-column type="index" label="序号" width="80" align="center" />
+                        <el-table-column label="网址" min-width="150" align="center">
+                           <template #default="scope">
+                              <span class="table-url">{{ scope.row.url }}</span>
+                           </template>
+                        </el-table-column>
+                        <el-table-column label="平台" prop="platform" width="200" align="center" />
+                        <el-table-column label="操作" width="200" align="center">
+                           <template #default="scope">
+                              <el-button type="primary" link size="small" icon="CopyDocument" @click="copyUrl(scope.row.url, scope.row.platform)">复制</el-button>
+                              <el-button type="success" link size="small" icon="TopRight" @click="openWebsite(scope.row.url)">跳转</el-button>
+                           </template>
+                        </el-table-column>
+                     </el-table>
+                  </el-tab-pane>
+                  <el-tab-pane label="诗歌" name="poetry">
+                     <div class="poetry-box">
+                        <h3 class="poetry-title">《写给自己的诗》</h3>
+                        <div class="poetry-content">
+                           <p>键盘敲击出黎明的光，</p>
+                           <p>代码编织成梦想的网。</p>
+                           <p>每一行文字都是种子，</p>
+                           <p>在数字的土壤里生长。</p>
+                           <br>
+                           <p>屏幕前的深夜不孤单，</p>
+                           <p>因为思想在云端流浪。</p>
+                           <p>博客是心灵的栖息地，</p>
+                           <p>记录岁月，也记录远方。</p>
                         </div>
+                        <div class="poetry-author">—— 醉摘镜中花</div>
                      </div>
                   </el-tab-pane>
-                  <el-tab-pane label="标签云" name="tags">
-                     <div class="tag-cloud">
-                        <el-tag v-for="tag in tags" :key="tag" class="tag-item">{{ tag }}</el-tag>
-                     </div>
-                  </el-tab-pane>
-                  <el-tab-pane label="关于" name="about">
-                     <div class="about-box">
-                        <h3>关于博客</h3>
-                        <p>{{ siteInfo.description }}</p>
+                  <el-tab-pane label="图片" name="image">
+                     <div class="image-full">
+                        <el-image
+                           :src="imageConfig.url"
+                           :preview-src-list="[imageConfig.url]"
+                           fit="cover"
+                           class="full-image"
+                        />
+                        <div class="image-caption">{{ imageConfig.caption }}</div>
                      </div>
                   </el-tab-pane>
                </el-tabs>
@@ -86,16 +108,22 @@ const siteInfo = reactive({
   description: '这是窝的个人博客'
 })
 
-const selectedTab = ref("articles")
+const selectedTab = ref("websites")
 
-const tags = ref(['Vue', 'JavaScript', 'Element Plus', '前端', '后端', '生活', '技术', '笔记'])
+// 图片配置对象
+const imageConfig = ref({
+  url: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&h=400&fit=crop',
+  caption: '博客首页截图',
+  width: '600px',
+  height: '300px'
+})
 
-const articleList = ref([
-  { id: 1, title: '博客文章标题 1', summary: '这是博客文章的摘要内容，展示文章的前几行文字...', date: '2024-06-01', views: 123 },
-  { id: 2, title: '博客文章标题 2', summary: '这是博客文章的摘要内容，展示文章的前几行文字...', date: '2024-06-02', views: 234 },
-  { id: 3, title: '博客文章标题 3', summary: '这是博客文章的摘要内容，展示文章的前几行文字...', date: '2024-06-03', views: 345 },
-  { id: 4, title: '博客文章标题 4', summary: '这是博客文章的摘要内容，展示文章的前几行文字...', date: '2024-06-04', views: 456 },
-  { id: 5, title: '博客文章标题 5', summary: '这是博客文章的摘要内容，展示文章的前几行文字...', date: '2024-06-05', views: 567 }
+const websiteList = ref([
+  { id: 1, url: 'https://myblog.3139822.xyz', platform: '博客' },
+  { id: 2, url: 'http://memos.3139822.xyz', platform: 'Memos' },
+  { id: 3, url: 'https://www.baidu.com', platform: '阿里' },
+  { id: 4, url: 'https://github.com', platform: 'GitHub' },
+  { id: 5, url: 'https://vuejs.org', platform: 'Vue' }
 ])
 
 function openWebsite(url) {
@@ -203,45 +231,76 @@ function copyUrl(url, name) {
   height: calc(100% - 50px);
   overflow-y: auto;
 }
-.article-list {
-  padding: 10px 0;
+
+/* 表格样式 */
+.site-table {
+  width: 100%;
 }
-.article-item {
-  padding: 16px 0;
-  border-bottom: 1px solid var(--el-border-color-lighter);
+.site-table :deep(.el-table__header-wrapper th) {
+  background-color: #f5f7fa !important;
+  color: #606266;
+  font-weight: 500;
 }
-.article-item:last-child {
-  border-bottom: none;
+.site-table :deep(.el-table__body tr) {
+  background-color: #ffffff;
 }
-.article-item h4 {
-  margin-bottom: 8px;
+.site-table :deep(.el-table__body tr:hover > td) {
+  background-color: #f5f7fa !important;
+}
+.site-table :deep(.el-table__row td) {
+  border-bottom: 1px solid #ebeef5;
+}
+.table-url {
+  color: #606266;
+}
+
+/* 诗歌样式 */
+.poetry-box {
+  padding: 30px 20px;
+  text-align: center;
+}
+.poetry-title {
+  font-size: 18px;
   color: var(--el-color-primary);
-  font-size: 16px;
+  margin-bottom: 24px;
+  font-weight: 600;
 }
-.article-item p {
+.poetry-content {
+  font-size: 15px;
+  line-height: 2.2;
   color: var(--el-text-color-regular);
-  font-size: 14px;
-  margin-bottom: 8px;
+  margin-bottom: 20px;
 }
-.article-meta {
-  display: flex;
-  gap: 20px;
-  font-size: 12px;
+.poetry-content p {
+  margin: 4px 0;
+}
+.poetry-author {
+  font-size: 13px;
   color: var(--el-text-color-secondary);
+  text-align: right;
+  padding-right: 40px;
 }
-.tag-cloud {
-  padding: 20px;
+
+/* 图片铺满 */
+.image-full {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
 }
-.tag-item {
-  margin: 6px;
-  cursor: pointer;
+.image-full :deep(.el-image) {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
 }
-.about-box {
-  padding: 20px;
-  line-height: 2;
+.image-full :deep(.el-image__inner) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
-.about-box h3 {
-  margin-bottom: 16px;
-  color: var(--el-color-primary);
+.image-caption {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--el-text-color-secondary);
+  text-align: center;
 }
 </style>

@@ -8,7 +8,7 @@
                    <span>网站信息</span>
                  </div>
                </template>
-                                             <div class="info-content">
+               <div class="info-content">
                   <div class="text-center">
                      <div class="avatar-box">
                         <img v-if="siteInfo.logo" :src="siteInfo.logo" class="site-logo-img" />
@@ -44,33 +44,49 @@
                  </div>
                </template>
                <el-tabs v-model="selectedTab">
-                  <el-tab-pane label="常用计算" name="common">
-                     <div class="calc-list">
-                        <div v-for="item in calcItems" :key="item.id" class="calc-item">
-                           <h4>{{ item.name }}</h4>
-                           <p>{{ item.desc }}</p>
-                           <div class="calc-meta">
-                             <span>类型: {{ item.type }}</span>
-                             <span>更新: {{ item.updateTime }}</span>
-                           </div>
+                  <el-tab-pane label="所有网站" name="websites">
+                     <el-table :data="websiteList" class="site-table" stripe>
+                        <el-table-column type="index" label="序号" width="80" align="center" />
+                        <el-table-column label="网址" min-width="200" align="center">
+                           <template #default="scope">
+                              <span class="table-url">{{ scope.row.url }}</span>
+                           </template>
+                        </el-table-column>
+                        <el-table-column label="平台" prop="platform" width="120" align="center" />
+                        <el-table-column label="操作" width="180" align="center">
+                           <template #default="scope">
+                              <el-button type="primary" link size="small" icon="CopyDocument" @click="copyUrl(scope.row.url, scope.row.platform)">复制</el-button>
+                              <el-button type="success" link size="small" icon="TopRight" @click="openWebsite(scope.row.url)">跳转</el-button>
+                           </template>
+                        </el-table-column>
+                     </el-table>
+                  </el-tab-pane>
+                  <el-tab-pane label="诗歌" name="poetry">
+                     <div class="poetry-box">
+                        <h3 class="poetry-title">《机械之心》</h3>
+                        <div class="poetry-content">
+                           <p>齿轮咬合出时间的节奏，</p>
+                           <p>轴承转动着岁月的轴。</p>
+                           <p>每一道螺纹都是誓言，</p>
+                           <p>在钢铁的怀抱里坚守。</p>
+                           <br>
+                           <p>液压泵输送着力量，</p>
+                           <p>传感器感知着方向。</p>
+                           <p>机械是工程师的语言，</p>
+                           <p>精确到微米，也精确到梦想。</p>
                         </div>
+                        <div class="poetry-author">—— 机械诗人</div>
                      </div>
                   </el-tab-pane>
-                  <el-tab-pane label="公式库" name="formula">
-                     <div class="formula-list">
-                        <div v-for="formula in formulas" :key="formula.id" class="formula-item">
-                           <el-tag type="primary" class="formula-tag">{{ formula.name }}</el-tag>
-                           <span class="formula-expr">{{ formula.expr }}</span>
-                        </div>
-                     </div>
-                  </el-tab-pane>
-                  <el-tab-pane label="历史记录" name="history">
-                     <div class="history-list">
-                        <div v-for="history in historyList" :key="history.id" class="history-item">
-                           <span class="history-name">{{ history.name }}</span>
-                           <span class="history-result">结果: {{ history.result }}</span>
-                           <span class="history-time">{{ history.time }}</span>
-                        </div>
+                  <el-tab-pane label="图片" name="image">
+                     <div class="image-full">
+                        <el-image
+                           :src="imageConfig.url"
+                           :preview-src-list="[imageConfig.url]"
+                           fit="cover"
+                           class="full-image"
+                        />
+                        <div class="image-caption">{{ imageConfig.caption }}</div>
                      </div>
                   </el-tab-pane>
                </el-tabs>
@@ -92,18 +108,22 @@ const siteInfo = reactive({
   description: '机械工程常用计算工具平台。'
 })
 
-const selectedTab = ref("common")
+const selectedTab = ref("websites")
 
-const calcItems = ref([
-  { id: 1, name: '齿轮传动计算', desc: '计算齿轮传动比、模数、齿数等参数', type: '传动', updateTime: '2024-06-01' }
-])
+// 图片配置对象
+const imageConfig = ref({
+  url: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=400&fit=crop',
+  caption: '机械工程示意图',
+  width: '600px',
+  height: '300px'
+})
 
-const formulas = ref([
-  { id: 1, name: '扭矩', expr: 'T = 9550 × P / n (N·m)' }
-])
-
-const historyList = ref([
-  { id: 1, name: '计算任务 1', result: '86.42', time: '2024-06-01 10:00' }
+const websiteList = ref([
+  { id: 1, url: 'https://mech.example.com', platform: '机械计算' },
+  { id: 2, url: 'https://myblog.3139822.xyz', platform: '博客' },
+  { id: 3, url: 'https://www.baidu.com', platform: '阿里' },
+  { id: 4, url: 'https://www.engineering.com', platform: '工程网' },
+  { id: 5, url: 'https://www.mcmaster.com', platform: 'McMaster' }
 ])
 
 function openWebsite(url) {
@@ -211,78 +231,76 @@ function copyUrl(url, name) {
   height: calc(100% - 50px);
   overflow-y: auto;
 }
-.calc-list {
-  padding: 10px 0;
+
+/* 表格样式 */
+.site-table {
+  width: 100%;
 }
-.calc-item {
-  padding: 16px 0;
-  border-bottom: 1px solid var(--el-border-color-lighter);
-}
-.calc-item:last-child {
-  border-bottom: none;
-}
-.calc-item h4 {
-  margin-bottom: 8px;
-  color: var(--el-color-primary);
-  font-size: 16px;
-}
-.calc-item p {
-  color: var(--el-text-color-regular);
-  font-size: 14px;
-  margin-bottom: 8px;
-}
-.calc-meta {
-  display: flex;
-  gap: 20px;
-  font-size: 12px;
-  color: var(--el-text-color-secondary);
-}
-.formula-list {
-  padding: 20px;
-}
-.formula-item {
-  padding: 12px 0;
-  border-bottom: 1px solid var(--el-border-color-lighter);
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.formula-item:last-child {
-  border-bottom: none;
-}
-.formula-tag {
-  flex-shrink: 0;
-}
-.formula-expr {
-  font-family: 'Courier New', monospace;
-  color: var(--el-text-color-regular);
-  font-size: 14px;
-}
-.history-list {
-  padding: 10px 0;
-}
-.history-item {
-  padding: 12px 16px;
-  margin-bottom: 8px;
-  border-radius: 6px;
-  background: var(--el-fill-color-lighter);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 14px;
-}
-.history-item:last-child {
-  margin-bottom: 0;
-}
-.history-name {
-  color: var(--el-text-color-primary);
+.site-table :deep(.el-table__header-wrapper th) {
+  background-color: #f5f7fa !important;
+  color: #606266;
   font-weight: 500;
 }
-.history-result {
-  color: var(--el-color-success);
+.site-table :deep(.el-table__body tr) {
+  background-color: #ffffff;
 }
-.history-time {
+.site-table :deep(.el-table__body tr:hover > td) {
+  background-color: #f5f7fa !important;
+}
+.site-table :deep(.el-table__row td) {
+  border-bottom: 1px solid #ebeef5;
+}
+.table-url {
+  color: #606266;
+}
+
+/* 诗歌样式 */
+.poetry-box {
+  padding: 30px 20px;
+  text-align: center;
+}
+.poetry-title {
+  font-size: 18px;
+  color: var(--el-color-primary);
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+.poetry-content {
+  font-size: 15px;
+  line-height: 2.2;
+  color: var(--el-text-color-regular);
+  margin-bottom: 20px;
+}
+.poetry-content p {
+  margin: 4px 0;
+}
+.poetry-author {
+  font-size: 13px;
   color: var(--el-text-color-secondary);
-  font-size: 12px;
+  text-align: right;
+  padding-right: 40px;
+}
+
+/* 图片铺满 */
+.image-full {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+}
+.image-full :deep(.el-image) {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+}
+.image-full :deep(.el-image__inner) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.image-caption {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--el-text-color-secondary);
+  text-align: center;
 }
 </style>
