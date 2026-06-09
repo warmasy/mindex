@@ -19,6 +19,7 @@
         </span>
       </router-link>
     </scroll-pane>
+    <div class="tags-view-clock">{{ currentTime }}</div>
     <ul v-show="visible" :style="{ left: left + 'px', top: top + 'px' }" class="contextmenu">
       <li @click="refreshSelectedTag(selectedTag)">
         <refresh-right style="width: 1em; height: 1em;" /> 刷新页面
@@ -79,7 +80,28 @@ watch(visible, (value) => {
 onMounted(() => {
   initTags()
   addTags()
+  updateTime()
+  timeTimer = setInterval(updateTime, 1000)
 })
+
+onUnmounted(() => {
+  if (timeTimer) clearInterval(timeTimer)
+})
+
+// ===================== 实时时钟 =====================
+const currentTime = ref('')
+let timeTimer = null
+
+function updateTime() {
+  const now = new Date()
+  const y = now.getFullYear()
+  const M = String(now.getMonth() + 1).padStart(2, '0')
+  const d = String(now.getDate()).padStart(2, '0')
+  const h = String(now.getHours()).padStart(2, '0')
+  const m = String(now.getMinutes()).padStart(2, '0')
+  const s = String(now.getSeconds()).padStart(2, '0')
+  currentTime.value = `${y} ${M} ${d} ${h}:${m}:${s}`
+}
 
 function isActive(r) {
   return r.path === route.path
@@ -246,6 +268,25 @@ function handleScroll() {
   background: var(--tags-bg, #fff);
   border-bottom: 1px solid var(--tags-item-border, #d8dce5);
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 0 3px 0 rgba(0, 0, 0, .04);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .tags-view-clock {
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--el-text-color-primary);
+    font-family: inherit;
+    letter-spacing: 0.5px;
+    padding: 0 14px;
+    height: 34px;
+    line-height: 34px;
+    user-select: none;
+    border-left: 1px solid var(--tags-item-border, #d8dce5);
+    background: var(--tags-bg, #fff);
+  }
+
   .tags-view-wrapper {
     .tags-view-item {
       display: inline-block;

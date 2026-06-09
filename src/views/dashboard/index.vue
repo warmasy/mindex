@@ -1,27 +1,19 @@
 <template>
   <div class="dashboard-wrapper">
-    <div class="pageHeaderContent">
-      <div class="avatar">
-        <el-avatar size="large" :src="currentUser.avatar" />
+    <el-card class="welcome-card" :body-style="{ padding: '16px 24px' }">
+      <div class="pageHeaderContent">
+        <div class="avatar">
+          <el-avatar size="large" :src="currentUser.avatar" />
+        </div>
+        <div class="content">
+          <div class="contentTitle">
+            早安，{{ currentUser.name }}，祝你开心每一天！
+          </div>
+          <div>{{ currentUser.title }} | {{ currentUser.group }}</div>
+        </div>
+
       </div>
-      <div class="content">
-        <div class="contentTitle">
-          早安，{{ currentUser.name }}，祝你开心每一天！
-        </div>
-		    <div>{{ currentUser.title }} | {{ currentUser.group }}</div>
-      </div>
-      <div class="extraContent">
-        <div class="statItem">
-          <el-statistic title="项目数" :value="0" />
-        </div>
-        <div class="statItem">
-          <el-statistic title="团队内排名" :value="0" suffix="/ 0" />
-        </div>
-        <div class="statItem">
-          <el-statistic title="项目访问" :value="0" />
-        </div>
-      </div>
-    </div>
+    </el-card>
 
     <div class="main-content">
       <el-row :gutter="16">
@@ -122,8 +114,50 @@
             </template>
             <div class="compact-calendar">
               <div class="calendar-toolbar">
-                <span class="calendar-month">{{ calendarYearMonth }}</span>
-                <span class="calendar-ganzhi">{{ ganzhiFull }}</span>
+                <div class="calendar-year-month">
+                  <el-popover
+                    placement="bottom"
+                    :width="220"
+                    trigger="click"
+                    v-model:visible="yearPopoverVisible"
+                  >
+                    <template #reference>
+                      <span class="calendar-year-text">{{ currentYear }}年</span>
+                    </template>
+                    <div class="year-picker">
+                      <div
+                        v-for="y in yearOptions"
+                        :key="y"
+                        class="picker-item"
+                        :class="{ active: y === currentYear }"
+                        @click="onYearSelect(y)"
+                      >
+                        {{ y }}
+                      </div>
+                    </div>
+                  </el-popover>
+                  <el-popover
+                    placement="bottom"
+                    :width="220"
+                    trigger="click"
+                    v-model:visible="monthPopoverVisible"
+                  >
+                    <template #reference>
+                      <span class="calendar-month-text">{{ currentMonthNum }}月</span>
+                    </template>
+                    <div class="month-picker">
+                      <div
+                        v-for="m in monthOptions"
+                        :key="m.value"
+                        class="picker-item"
+                        :class="{ active: m.value === currentMonthNum }"
+                        @click="onMonthSelect(m.value)"
+                      >
+                        {{ m.label }}
+                      </div>
+                    </div>
+                  </el-popover>
+                </div>
                 <div class="calendar-btns">
                   <el-button text size="small" @click="prevMonth">上个月</el-button>
                   <el-button text size="small" @click="goToday">今天</el-button>
@@ -172,10 +206,7 @@
 </template>
 
 <script setup>
-import useSettingsStore from "@/store/modules/settings";
-
-const settingsStore = useSettingsStore();
-
+import { ref, computed, defineOptions } from 'vue';
 defineOptions({
   name: "DashBoard",
 });
@@ -312,48 +343,64 @@ const activities = [
 
 // ===================== 日历逻辑 =====================
 const currentMonth = ref(new Date());
+const currentYear = computed({
+  get: () => currentMonth.value.getFullYear(),
+  set: (val) => {
+    const d = new Date(currentMonth.value);
+    d.setFullYear(val);
+    currentMonth.value = d;
+  }
+});
+const currentMonthNum = computed({
+  get: () => currentMonth.value.getMonth() + 1,
+  set: (val) => {
+    const d = new Date(currentMonth.value);
+    d.setMonth(val - 1);
+    currentMonth.value = d;
+  }
+});
+
+const yearOptions = computed(() => {
+  const currentY = new Date().getFullYear();
+  const years = [];
+  for (let y = currentY - 10; y <= currentY + 10; y++) {
+    years.push(y);
+  }
+  return years;
+});
+
+const monthOptions = [
+  { value: 1, label: '1月' },
+  { value: 2, label: '2月' },
+  { value: 3, label: '3月' },
+  { value: 4, label: '4月' },
+  { value: 5, label: '5月' },
+  { value: 6, label: '6月' },
+  { value: 7, label: '7月' },
+  { value: 8, label: '8月' },
+  { value: 9, label: '9月' },
+  { value: 10, label: '10月' },
+  { value: 11, label: '11月' },
+  { value: 12, label: '12月' },
+];
+
+const yearPopoverVisible = ref(false);
+const monthPopoverVisible = ref(false);
+
+function onYearSelect(val) {
+  const d = new Date(currentMonth.value);
+  d.setFullYear(val);
+  currentMonth.value = d;
+  yearPopoverVisible.value = false;
+}
+
+function onMonthSelect(val) {
+  const d = new Date(currentMonth.value);
+  d.setMonth(val - 1);
+  currentMonth.value = d;
+  monthPopoverVisible.value = false;
+}
 const selectedDate = ref(new Date());
-
-const calendarYearMonth = computed(() => {
-  const y = currentMonth.value.getFullYear();
-  const m = currentMonth.value.getMonth() + 1;
-  return `${y}年 ${m}月`;
-});
-
-const ganzhiFull = computed(() => {
-  const date = selectedDate.value;
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-
-  const tiangan = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
-  const dizhi = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
-
-  const yearTg = (year - 4) % 10;
-  const yearDz = (year - 4) % 12;
-  const yearGz = tiangan[yearTg] + dizhi[yearDz];
-
-  let firstMonthGan;
-  if (yearTg === 0 || yearTg === 5) firstMonthGan = 2;
-  else if (yearTg === 1 || yearTg === 6) firstMonthGan = 4;
-  else if (yearTg === 2 || yearTg === 7) firstMonthGan = 6;
-  else if (yearTg === 3 || yearTg === 8) firstMonthGan = 8;
-  else firstMonthGan = 0;
-
-  const monthTg = (firstMonthGan + month - 1) % 10;
-  const monthDz = (month + 1) % 12;
-  const monthGz = tiangan[monthTg] + dizhi[monthDz];
-
-  const baseDate = new Date(2026, 0, 1);
-  const baseTg = 4;
-  const baseDz = 2;
-  const delta = Math.floor((date - baseDate) / (1000 * 60 * 60 * 24));
-  const dayTg = (baseTg + delta) % 10;
-  const dayDz = (baseDz + delta) % 12;
-  const dayGz = tiangan[(dayTg + 10) % 10] + dizhi[(dayDz + 12) % 12];
-
-  return `${yearGz}年 ${monthGz}月 ${dayGz}日`;
-});
 
 function getISOWeek(date) {
   const tmp = new Date(date.getTime());
@@ -473,22 +520,23 @@ function refreshQuote() {
 /* ========== 占满全宽：抵消外层 .app-container 的 20px padding ========== */
 .dashboard-wrapper {
   width: 100%;
-  margin: -20px;
-  padding: 20px;
-  box-sizing: content-box;
+  padding: 16px 20px;
+  box-sizing: border-box;
 }
 
 .main-content {
   padding: 0;
 }
 
+/* ========== 欢迎卡片 ========== */
+.welcome-card {
+  margin-bottom: 16px;
+}
+
 /* ========== Header ========== */
 .pageHeaderContent {
   display: flex;
-  padding: 12px 16px;
-  margin-bottom: 0;
-  box-shadow: var(--el-box-shadow-light);
-  background: var(--el-bg-color);
+  align-items: center;
   .avatar {
     flex: 0 1 72px;
     & > span {
@@ -511,52 +559,6 @@ function refreshQuote() {
       font-weight: 500;
       font-size: 20px;
       line-height: 28px;
-    }
-  }
-}
-
-.extraContent {
-  float: right;
-  white-space: nowrap;
-  .statItem {
-    position: relative;
-    display: inline-block;
-    padding: 0 32px;
-    :deep(.el-statistic__head) {
-      margin-bottom: 4px;
-      color: var(--el-text-color-secondary);
-      font-size: 14px;
-      line-height: 22px;
-    }
-    :deep(.el-statistic__content) {
-      margin: 0;
-      color: var(--el-text-color-primary);
-      font-size: 30px;
-      line-height: 38px;
-      .el-statistic__number {
-        font-size: 30px;
-        line-height: 38px;
-      }
-      .el-statistic__suffix {
-        color: var(--el-text-color-secondary);
-        font-size: 20px;
-        margin-left: 4px;
-      }
-    }
-    &::after {
-      position: absolute;
-      top: 8px;
-      right: 0;
-      width: 1px;
-      height: 40px;
-      background-color: var(--el-border-color);
-      content: "";
-    }
-    &:last-child {
-      padding-right: 0;
-      &::after {
-        display: none;
-      }
     }
   }
 }
@@ -688,17 +690,59 @@ function refreshQuote() {
   margin-bottom: 10px;
   gap: 8px;
 }
-.calendar-ganzhi {
-  font-size: 13px;
-  color: var(--el-color-primary);
-  font-weight: 600;
-  flex: 1;
-  text-align: center;
+.calendar-year-month {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
-.calendar-month {
-  font-size: 16px;
-  font-weight: 600;
+.calendar-year-text,
+.calendar-month-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--el-text-color-regular);
+  cursor: pointer;
+  user-select: none;
+  padding: 4px 10px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  line-height: 1;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.calendar-year-text:hover,
+.calendar-month-text:hover {
+  color: var(--el-color-primary);
+  background-color: var(--el-fill-color-light);
+}
+.year-picker,
+.month-picker {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  padding: 4px;
+}
+.picker-item {
+  text-align: center;
+  padding: 6px 0;
+  font-size: 13px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
   color: var(--el-text-color-primary);
+}
+.picker-item:hover {
+  background-color: var(--el-fill-color-light);
+  color: var(--el-color-primary);
+}
+.picker-item.active {
+  background-color: var(--el-color-primary);
+  color: #fff;
 }
 .calendar-btns {
   display: flex;
@@ -775,47 +819,24 @@ function refreshQuote() {
   color: var(--el-color-primary);
 }
 .quote-text {
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 15px;
+  line-height: 1.8;
   color: var(--el-text-color-primary);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  font-family: inherit;
+  letter-spacing: 0.3px;
 }
 .quote-author {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--el-text-color-secondary);
   text-align: right;
+  font-family: inherit;
 }
 
 /* ========== 响应式 ========== */
-@media screen and (max-width: 1200px) and (min-width: 992px) {
-  .extraContent {
-    margin-left: -44px;
-    .statItem {
-      padding: 0 16px;
-    }
-  }
-}
-
 @media screen and (max-width: 992px) {
-  .extraContent {
-    float: none;
-    margin-right: 0;
-    .statItem {
-      padding: 0 16px;
-      text-align: left;
-      &::after {
-        display: none;
-      }
-    }
-  }
   .projectList .projectGrid {
     width: 50%;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .extraContent {
-    margin-left: -16px;
   }
 }
 
@@ -824,11 +845,6 @@ function refreshQuote() {
     display: block;
     .content {
       margin-left: 0;
-    }
-  }
-  .extraContent {
-    .statItem {
-      float: none;
     }
   }
   .projectList .projectGrid {
